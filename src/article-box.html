@@ -1,0 +1,125 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="article-box">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      @media (max-width: 426px) {
+        :host {
+            overflow: scroll;
+
+        }
+      }
+      paper-card {
+        margin: var(--article-box-margin, 24px);
+        padding: 24px;
+        background: #eee;
+      }
+      iron-icon {
+        height: 32px;
+        width: 32px;
+        padding-bottom: 16px
+      }
+      @media (max-width: 426px) {
+        iron-icon {
+          height: 12px;
+          width: 12px;
+          padding-bottom: 0;
+          padding-top: 2px;
+        }
+        paper-card {
+          margin: 6px;
+          padding: 12px;
+        }
+      }
+      h1,
+      ::slotted(h1) {
+        color: #212121;
+        /*font-size: 22px;*/
+        display: inline-block;
+      }
+      ::slotted(pre) {
+        border: 0.5px solid #aca;
+        border-radius: 2.5px;
+        min-width: 0;
+      }
+
+      @media (min-width: 50em) {
+        .warning,
+        .info,
+        .style,
+        .elfy {
+          margin-left: 48px;
+        }
+      }
+
+      .warning {
+        background: #f2dede;
+      }
+      .warning iron-icon {
+        fill: #a55;
+      }
+      .warning ::slotted(h1::before) {
+        content: "Bad Practice: ";
+      }
+
+      .info {
+        background: #d9edf7;
+      }
+      .info iron-icon {
+        fill: #387693;
+      }
+      .info ::slotted(h1::before) {
+        content: "Code Tip: "
+      }
+
+      .style {
+        background: #dff0d8;
+      }
+      .style iron-icon {
+        fill: #3c763d;
+      }
+      .style ::slotted(h1::before) {
+        content: "Programming Style: "
+      }
+
+      .elfy {
+        background: #ddd;
+      }
+      .elfy iron-icon {
+        fill: #666;
+      }
+      .elfy ::slotted(h1::before) {
+        content: "Exercise Left For You: ";
+      }
+    </style>
+
+    <paper-card class$="[[type]]">
+      <iron-icon id="icon"></iron-icon>
+      <slot></slot>
+    </paper-card>
+
+  </template>
+  <script>
+    Polymer({
+        is: 'article-box',
+        properties: {
+            type: String,
+        },
+        ready: function() {
+            var img = this.$.icon;
+            switch (this.type) {
+                case "warning": img.icon = "icons:warning";         break;
+                case "info":    img.icon = "icons:info-outline";    break;
+                case "style":   img.icon = "icons:gesture";         break;
+                case "elfy":    img.icon = "icons:create";          break;
+                default:        img.style.display = "none";
+            }
+        },
+    });
+  </script>
+</dom-module>

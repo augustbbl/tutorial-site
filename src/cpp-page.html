@@ -1,0 +1,167 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="my-icons.html">
+
+<dom-module id="cpp-page">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #093;
+        --app-secondary-color: black;
+        display: block;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      app-toolbar {
+          height: 2.5em;
+      }
+
+      app-drawer {
+        --app-drawer-content-container: {
+          background-color: #ccc;
+        };
+      }
+
+      app-drawer app-toolbar {
+        background-color: #999;
+        border-bottom: 1px solid green;
+        /*border-left: 3px solid green;*/
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+        border-left: 3px solid green;
+      }
+
+      .drawer-list a.iron-selected,
+      .drawer-list a:hover {
+        background-color: #bbb;
+
+      }
+
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/cpp/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}">
+    </app-route>
+
+    <app-drawer-layout fullbleed responsive-width="1024px">
+      <!-- Drawer content -->
+      <app-drawer swipe-open>
+        <app-toolbar>Modules</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="s0" href="/cpp/s0">Introduction</a>
+          <a name="s1" href="/cpp/s1">Variables</a>
+          <a name="s2" href="/cpp/s2">Flow Control</a>
+          <a name="s3" href="/cpp/s3">Functions</a>
+          <a name="s4" href="/cpp/s4">Objects</a>
+          <a name="s5" href="/cpp/s5">Inheritance</a>
+          <a name="s6" href="/cpp/s6">Memory</a>
+        </iron-selector>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+
+        <app-header reveals condenses effects="waterfall blend-background">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>Learn C++</div>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="404"
+            role="main">
+          <cpp-s0 name="s0"></cpp-s0>
+          <cpp-s1 name="s1"></cpp-s1>
+          <cpp-s2 name="s2"></cpp-s2>
+          <cpp-s3 name="s3"></cpp-s3>
+          <cpp-s4 name="s4"></cpp-s4>
+          <cpp-s5 name="s5"></cpp-s5>
+          <cpp-s6 name="s6"></cpp-s6>
+          <cpp-404 name="404"></cpp-404>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'cpp-page',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        }
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+      _routePageChanged: function(page) {
+        this.page = page || 's0';
+      },
+
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('cpp-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function() {
+        this.page = '404';
+      }
+    });
+  </script>
+</dom-module>
